@@ -63,9 +63,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-  <!-- GSAP CDN -->
+  <!-- GSAP & ScrollTrigger CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis Smooth Scroll Engine CDN -->
+  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
 
   <style>
     *, *::before, *::after {
@@ -1705,9 +1708,90 @@ _Please share technical data sheet, bulk carton rates & stock availability._`;
         }
       }
 
-      requestAnimationFrame(animateSparks);
+    // -------------------------------------------------------------
+    // G. LENIS SMOOTH SCROLL + GSAP PARALLAX ANIMATION ENGINE
+    // -------------------------------------------------------------
+    gsap.registerPlugin(ScrollTrigger);
+
+    let lenis;
+    if (typeof Lenis !== 'undefined') {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        smoothWheel: true,
+        touchMultiplier: 1.5,
+      });
+
+      lenis.on('scroll', ScrollTrigger.update);
+
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
     }
-    animateSparks();
+
+    // Parallax Effect 1: Hero 3D Card and Heading Differential Scrub
+    gsap.to('#home h1', {
+      scrollTrigger: {
+        trigger: '#home',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.2,
+      },
+      y: -60,
+      opacity: 0.3,
+      scale: 0.96,
+    });
+
+    // Parallax Effect 2: Three.js 3D Camera Rotation on Scroll
+    ScrollTrigger.create({
+      trigger: 'body',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1.5,
+      onUpdate: (self) => {
+        if (camera && scene) {
+          const progress = self.progress;
+          camera.position.y = 15 + Math.sin(progress * Math.PI * 2) * 8;
+          camera.position.x = Math.cos(progress * Math.PI * 2) * 12;
+          camera.lookAt(0, 0, 0);
+        }
+      }
+    });
+
+    // Parallax Effect 3: Staggered Bento Cards Scroll Reveal
+    gsap.utils.toArray('.item-card').forEach((card, index) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 92%',
+          toggleActions: 'play none none none',
+        },
+        y: 40,
+        opacity: 0,
+        duration: 0.6,
+        delay: (index % 4) * 0.08,
+        ease: 'power2.out',
+      });
+    });
+
+    // Parallax Effect 4: Real-Time 3D Mouse / Touch Tilt on Cards
+    const tiltElements = document.querySelectorAll('.cyber-card');
+    tiltElements.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const rotateX = -(y / rect.height) * 10;
+        const rotateY = (x / rect.width) * 10;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
+    });
   </script>
 </body>
 </html>
