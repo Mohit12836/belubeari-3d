@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
-  <title>M/s Belubeari Exim | 3D Mechanical Transmission & Robotics Engineering Hub</title>
-  <meta name="description" content="Awwwards-grade 3D Interactive WebGL Industrial Transmission Hub for Mitsuboshi & Conti Timing Belts, Precision Chrome Bearings & CNC Linear Systems in Masjid Bunder, Mumbai." />
+  <title>M/s Belubeari Exim | Master Industrial Transmission & Bearings Digital Experience</title>
+  <meta name="description" content="Awwwards-grade digital experience for M/s Belubeari Exim — Mumbai's master importer & distributor of Mitsuboshi, Continental ContiTech timing belts, precision bearings, and CNC linear motion guides." />
 
   <!-- Google Fonts: Space Grotesk + Plus Jakarta Sans + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,6 +36,7 @@
             'radar-sweep': 'radarSweep 4s linear infinite',
             'pulse-glow': 'pulseGlow 2.5s ease-in-out infinite',
             'laser-scan': 'laserScan 3s ease-in-out infinite',
+            'marquee': 'marquee 25s linear infinite',
           },
           keyframes: {
             radarSweep: {
@@ -49,6 +50,10 @@
             laserScan: {
               '0%, 100%': { top: '0%' },
               '50%': { top: '95%' }
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-50%)' },
             }
           }
         }
@@ -67,9 +72,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-  <!-- Lenis Smooth Scroll Engine CDN -->
-  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
-
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
@@ -77,23 +79,19 @@
       padding: 0;
     }
     
-    html, body {
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
       width: 100%;
       max-width: 100%;
       overflow-x: clip;
-      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
-      background-color: #030712;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 100% 40%, rgba(6, 182, 212, 0.14) 0%, transparent 45%),
-        radial-gradient(circle at 0% 70%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-      color: #f8fafc;
       font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .font-display { font-family: 'Space Grotesk', sans-serif; }
@@ -107,20 +105,26 @@
       padding-inline: clamp(0.75rem, 3.5vw, 2.5rem);
     }
 
-    /* Cyber-Industrial Bento Surface */
+    /* Ultra-Smooth Cyber Bento Surface */
     .cyber-card {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(3, 7, 18, 0.95) 100%);
-      border: 1px solid rgba(250, 204, 21, 0.2);
-      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(3, 7, 18, 0.98) 100%);
+      border: 1px solid rgba(250, 204, 21, 0.22);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       position: relative;
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      contain: layout style paint;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
     }
     .cyber-card:hover {
       border-color: rgba(250, 204, 21, 0.6);
-      box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.9), 0 0 30px 2px rgba(250, 204, 21, 0.2);
-      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.9), 0 0 25px 2px rgba(250, 204, 21, 0.25);
+      transform: translateY(-3px);
+    }
+
+    /* Auto Offscreen Virtualization for 120 FPS */
+    .item-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 0 380px;
     }
 
     /* Crosshair Corner Marks */
@@ -154,18 +158,11 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Cyan Gradient Text */
-    .cyan-gradient-text {
-      background: linear-gradient(90deg, #a5f3fc 0%, #38bdf8 50%, #818cf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
     /* 3D Canvas Container */
     #webgl-canvas-container {
       width: 100%;
       height: 100%;
-      min-height: 380px;
+      min-height: 340px;
       cursor: grab;
     }
     #webgl-canvas-container:active {
@@ -220,7 +217,7 @@
     }
 
     /* ============================================================
-       THEME 1: 🪩 PEARL OPAL LUXE (PLATINUM LIGHT LUXURY)
+       THEME 1: 🪩 PEARL OPAL LUXE (PLATINUM LIGHT LUXURY - DEFAULT)
     ============================================================ */
     body.theme-pearl {
       background-color: #f8fafc;
@@ -283,10 +280,17 @@
     body.theme-pearl .text-emerald-400 { color: #059669 !important; }
 
     /* ============================================================
-       THEME 2: 👑 OBSIDIAN GOLD (CYBER MIDNIGHT)
+       THEME 2: 👑 OBSIDIAN GOLD
     ============================================================ */
     body.theme-gold {
       background-color: #030712;
+      background-image: 
+        radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.22) 0%, transparent 60%),
+        radial-gradient(circle at 100% 30%, rgba(6, 182, 212, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 0% 65%, rgba(16, 185, 129, 0.16) 0%, transparent 50%),
+        linear-gradient(rgba(245, 158, 11, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 158, 11, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
       color: #f8fafc;
     }
 
@@ -295,6 +299,12 @@
     ============================================================ */
     body.theme-cyber {
       background-color: #050c18;
+      background-image: 
+        radial-gradient(circle at 50% -10%, rgba(6, 182, 212, 0.30) 0%, transparent 60%),
+        radial-gradient(circle at 100% 40%, rgba(99, 102, 241, 0.25) 0%, transparent 55%),
+        linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
       color: #e2e8f0;
     }
 
@@ -320,7 +330,7 @@
       <div class="flex items-center gap-2 font-mono text-[10px] sm:text-[11px] text-amber-300 min-w-0">
         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/40 text-amber-300 font-bold uppercase shrink-0">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>B2B CENTRAL HUB</span>
+          <span>B2B MASTER HUB</span>
         </span>
         <span class="truncate font-medium text-slate-300">Masjid Bunder, Mumbai • Real-Time CAD Sourcing Active</span>
       </div>
@@ -328,7 +338,7 @@
       <!-- 3 Theme Switcher + Audio Controls -->
       <div class="flex items-center gap-2 shrink-0 font-mono text-[11px]">
         
-        <!-- Theme Switcher -->
+        <!-- 3 Master Cinematic Themes Switcher -->
         <div class="flex items-center p-0.5 rounded-full bg-black/40 border border-white/20 backdrop-blur-sm" id="themeSwitcherGroup">
           <button onclick="setTheme('theme-pearl')" id="tbtn-pearl" title="Pearl Opal Light Luxe" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold transition btn-spring bg-blue-600 text-white flex items-center gap-1 shadow-sm">
             <span>🪩 Pearl</span>
@@ -1125,19 +1135,11 @@
   </div>
 
   <!-- ============================================================
-       10. JAVASCRIPT MASTER ENGINES: THREE.JS + WEB AUDIO + SIM
+       10. JAVASCRIPT MASTER ENGINES: THREE.JS + PARALLAX + AUDIO
   ============================================================ -->
   <script>
     lucide.createIcons();
     document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-    // Update Live Clock
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('liveClock').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' IST';
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
 
     // -------------------------------------------------------------
     // LIVE THEME SWITCHER
@@ -1285,11 +1287,11 @@
       const label = document.getElementById('audioLabel');
       const icon = document.getElementById('audioIcon');
       if (audioEnabled) {
-        label.textContent = 'Audio: ON';
+        label.textContent = 'Sound: ON';
         icon.setAttribute('data-lucide', 'volume-2');
         sound.playChime();
       } else {
-        label.textContent = 'Audio: OFF';
+        label.textContent = 'Sound: OFF';
         icon.setAttribute('data-lucide', 'volume-x');
       }
       lucide.createIcons();
@@ -1390,7 +1392,6 @@
       );
       bearingGroup.add(innerRing);
 
-      // Ball elements
       for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
         const ball = new THREE.Mesh(
@@ -1404,28 +1405,34 @@
       bearingGroup.position.set(0, 0, 4);
       scene.add(bearingGroup);
 
-      // Window resize
       window.addEventListener('resize', () => {
-        if (!container) return;
+        if (!container || !renderer || !camera) return;
         const w = container.clientWidth;
         const h = container.clientHeight;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
-      });
+      }, { passive: true });
 
+      // Only render 3D WebGL when hero is actually visible in viewport
+      let isHeroInView = true;
+      const heroObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { isHeroInView = e.isIntersecting; });
+      }, { threshold: 0.05 });
+      heroObs.observe(container);
+
+      function animateThree() {
+        requestAnimationFrame(animateThree);
+        if (!isHeroInView) return; // 0% GPU/CPU overhead when scrolled down!
+        
+        if (pulleyMesh1) pulleyMesh1.rotation.y += 0.015;
+        if (pulleyMesh2) pulleyMesh2.rotation.y -= 0.025;
+        if (bearingGroup) bearingGroup.rotation.z += 0.012;
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
       animateThree();
-    }
-
-    function animateThree() {
-      requestAnimationFrame(animateThree);
-      
-      if (pulleyMesh1) pulleyMesh1.rotation.y += 0.02;
-      if (pulleyMesh2) pulleyMesh2.rotation.y -= 0.035;
-      if (bearingGroup) bearingGroup.rotation.z += 0.015;
-
-      controls.update();
-      renderer.render(scene, camera);
     }
 
     function toggle3DMode(mode) {
@@ -1487,7 +1494,7 @@
 
       const ratio = z2 / z1;
       const outRpm = Math.round(rpm / ratio);
-      const pitchMM = 8; // 8M belt
+      const pitchMM = 8;
       const beltSpeedMS = ((z1 * pitchMM * rpm) / 60000).toFixed(2);
 
       document.getElementById('simOutputRpm').textContent = `${outRpm} RPM`;
@@ -1631,72 +1638,54 @@ _Please share technical data sheet, bulk carton rates & stock availability._`;
     }
 
     // -------------------------------------------------------------
-    // F. DYNAMIC CANVAS SUPERNOVA SPARK PARTICLES
+    // F. HIGH-PERFORMANCE CLICK BURST (NO CONTINUOUS GPU DRAIN)
     // -------------------------------------------------------------
     const sparkCanvas = document.getElementById('sparkCanvas');
-    const sCtx = sparkCanvas.getContext('2d');
-    let sparkParticles = [];
+    const sCtx = sparkCanvas ? sparkCanvas.getContext('2d') : null;
     let supernovaClicks = [];
+    let isSparkLoopRunning = false;
 
     function resizeSparkCanvas() {
+      if (!sparkCanvas) return;
       sparkCanvas.width = window.innerWidth;
       sparkCanvas.height = window.innerHeight;
     }
     resizeSparkCanvas();
-    window.addEventListener('resize', resizeSparkCanvas);
+    window.addEventListener('resize', resizeSparkCanvas, { passive: true });
 
-    class BgSpark {
-      constructor() {
-        this.x = Math.random() * sparkCanvas.width;
-        this.y = Math.random() * sparkCanvas.height;
-        this.size = Math.random() * 2 + 0.8;
-        this.speedX = (Math.random() - 0.5) * 0.4;
-        this.speedY = (Math.random() - 0.5) * 0.4;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0 || this.x > sparkCanvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > sparkCanvas.height) this.speedY *= -1;
-      }
-      draw() {
-        sCtx.fillStyle = 'rgba(250, 204, 21, 0.7)';
-        sCtx.beginPath();
-        sCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        sCtx.fill();
-      }
-    }
-
-    for (let i = 0; i < 40; i++) sparkParticles.push(new BgSpark());
-
-    window.addEventListener('click', (e) => {
-      sound.playClick();
-      for (let i = 0; i < 20; i++) {
+    window.addEventListener('pointerdown', (e) => {
+      if (sound) sound.playClick();
+      if (!sCtx) return;
+      for (let i = 0; i < 12; i++) {
         supernovaClicks.push({
           x: e.clientX,
           y: e.clientY,
-          vx: (Math.random() - 0.5) * 7,
-          vy: (Math.random() - 0.5) * 7,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
           life: 1,
-          size: Math.random() * 3 + 1,
+          size: Math.random() * 2.5 + 1,
           color: Math.random() > 0.5 ? '250, 204, 21' : '6, 182, 212'
         });
       }
-    });
+      if (!isSparkLoopRunning) {
+        isSparkLoopRunning = true;
+        requestAnimationFrame(renderSparkBurst);
+      }
+    }, { passive: true });
 
-    function animateSparks() {
+    function renderSparkBurst() {
+      if (!sCtx || supernovaClicks.length === 0) {
+        if (sCtx) sCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+        isSparkLoopRunning = false;
+        return;
+      }
       sCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
-
-      sparkParticles.forEach(p => {
-        p.update();
-        p.draw();
-      });
 
       for (let i = supernovaClicks.length - 1; i >= 0; i--) {
         const s = supernovaClicks[i];
         s.x += s.vx;
         s.y += s.vy;
-        s.life -= 0.035;
+        s.life -= 0.045;
 
         if (s.life <= 0) {
           supernovaClicks.splice(i, 1);
@@ -1707,91 +1696,82 @@ _Please share technical data sheet, bulk carton rates & stock availability._`;
           sCtx.fill();
         }
       }
+      requestAnimationFrame(renderSparkBurst);
+    }
 
     // -------------------------------------------------------------
-    // G. LENIS SMOOTH SCROLL + GSAP PARALLAX ANIMATION ENGINE
+    // G. 120 FPS HARDWARE-ACCELERATED SCROLL & INTERSECTION OBSERVER
     // -------------------------------------------------------------
     gsap.registerPlugin(ScrollTrigger);
 
-    let lenis;
-    if (typeof Lenis !== 'undefined') {
-      lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: 'vertical',
-        smoothWheel: true,
-        touchMultiplier: 1.5,
-      });
-
-      lenis.on('scroll', ScrollTrigger.update);
-
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
-      gsap.ticker.lagSmoothing(0);
-    }
-
-    // Parallax Effect 1: Hero 3D Card and Heading Differential Scrub
+    // Hero 3D Card and Heading Differential Scrub
     gsap.to('#home h1', {
       scrollTrigger: {
         trigger: '#home',
         start: 'top top',
         end: 'bottom top',
-        scrub: 1.2,
+        scrub: 1,
       },
-      y: -60,
-      opacity: 0.3,
-      scale: 0.96,
+      y: -40,
+      opacity: 0.5,
     });
 
-    // Parallax Effect 2: Three.js 3D Camera Rotation on Scroll
+    // 3D Camera Rotation Sync with Scroll
     ScrollTrigger.create({
       trigger: 'body',
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 1.5,
+      scrub: 1,
       onUpdate: (self) => {
-        if (camera && scene) {
+        if (camera && scene && isHeroInView) {
           const progress = self.progress;
-          camera.position.y = 15 + Math.sin(progress * Math.PI * 2) * 8;
-          camera.position.x = Math.cos(progress * Math.PI * 2) * 12;
+          camera.position.y = 15 + Math.sin(progress * Math.PI * 2) * 6;
+          camera.position.x = Math.cos(progress * Math.PI * 2) * 10;
           camera.lookAt(0, 0, 0);
         }
       }
     });
 
-    // Parallax Effect 3: Staggered Bento Cards Scroll Reveal
-    gsap.utils.toArray('.item-card').forEach((card, index) => {
-      gsap.from(card, {
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 92%',
-          toggleActions: 'play none none none',
-        },
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        delay: (index % 4) * 0.08,
-        ease: 'power2.out',
+    // High Performance Staggered Reveal via IntersectionObserver
+    const cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          cardObserver.unobserve(entry.target);
+        }
       });
+    }, { rootMargin: '50px 0px', threshold: 0.05 });
+
+    document.querySelectorAll('.item-card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = 'opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+      cardObserver.observe(card);
     });
 
-    // Parallax Effect 4: Real-Time 3D Mouse / Touch Tilt on Cards
-    const tiltElements = document.querySelectorAll('.cyber-card');
-    tiltElements.forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        const rotateX = -(y / rect.height) * 10;
-        const rotateY = (x / rect.width) * 10;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-      });
+    // 3D Mouse Tilt (Desktop Fine Pointer Only - No Mobile Overhead)
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      let tiltRaf = null;
+      document.querySelectorAll('.cyber-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          if (tiltRaf) return;
+          tiltRaf = requestAnimationFrame(() => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            const rotateX = -(y / rect.height) * 8;
+            const rotateY = (x / rect.width) * 8;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+            tiltRaf = null;
+          });
+        }, { passive: true });
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
       });
-    });
+    }
   </script>
 </body>
 </html>
